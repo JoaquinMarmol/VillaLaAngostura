@@ -51,11 +51,10 @@ const HomePage = () => {
         return [...prevCart, { event, quantity: 1 }];
       }
     });
-  
+
     // Abrir el carrito si estaba vacío antes de agregar el nuevo ítem
     setIsCartOpen((prevCart) => prevCart.length === 0);
   };
-  
 
   // Función para abrir el modal
   const openModal = (event) => {
@@ -97,7 +96,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto py-4">
       {/* Header con el ícono del carrito */}
       <header className="flex justify-center items-center mb-8">
         <img src="/Logo.png" alt="Logo" className="h-52" />
@@ -122,22 +121,32 @@ const HomePage = () => {
       </header>
 
       {/* Lista de eventos */}
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 z-10 cursor-pointer">
         {events.map((event) => (
           <div
             key={event.id}
-            className="border p-4 gap-10 rounded shadow hover:shadow-lg transition flex"
+            className="border border-neutral-800 p-4 rounded shadow hover:shadow-lg transition flex flex-col items-center justify-between h-72"
             onClick={() => openModal(event)}
           >
-            <div className="h-40bg-gray-300 w-[200px]">
-              <img src={event.image} alt={event.name} className="w-full h-full object-cover" />
+            {/* Imagen del evento */}
+            <div className="w-full h-32 mb-4">
+              <img
+                src={event.image}
+                alt={event.name}
+                className="w-full h-full object-cover rounded"
+              />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold">{event.name}</h2>
-              <p>Precio: ${event.price}</p>
+
+            {/* Contenido del evento */}
+            <div className="flex flex-col items-center text-center w-full">
+              <h2 className="text-lg font-semibold mb-2">{event.name}</h2>
+              <p className="mb-4">Precio: ${event.price}</p>
               <button
-                onClick={() => addToCart(event)}
-                className="bg-green-500 text-white px-4 py-2 mt-4 rounded"
+                onClick={(e) => {
+                  e.stopPropagation(); // Evita que el clic se propague al elemento padre
+                  addToCart(event);
+                }}
+                className="bg-green-500 text-white px-4 py-2 rounded w-full"
               >
                 Comprar
               </button>
