@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { FaTrash } from "react-icons/fa";
 
 const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
   const subtotal = cart.reduce(
@@ -38,19 +39,19 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-10"
+          className="fixed inset-0 bg-[#171717] bg-opacity-50 z-10"
           onClick={onClose}
         />
       )}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-neutral-900 shadow-lg z-20 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed top-0 right-0 h-full w-80 bg-[#171717] shadow-lg z-20 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
           }`}
       >
-        <div className="p-4 flex justify-between items-center border-b">
+        <div className="p-4 flex justify-between items-center border-b border-neutral-500">
           <h2 className="text-xl font-bold text-gray-300">Carrito</h2>
           <button
             onClick={onClose}
-            className="text-gray-300 hover:text-black text-2xl"
+            className="text-gray-300 hover:text-neutral-600 text-2xl"
           >
             &times;
           </button>
@@ -64,12 +65,12 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
           ) : (
             <ul>
               {cart.map((item, index) => (
-                <li key={index} className="mb-4 text-gray-300">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">{item.event.name}</span>
+                <li key={index} className="mb-4 text-gray-300 flex justify-between items-start gap-2">
+                  <div className="flex flex-col justify-between text-[15px]">
+                    <span className="font-semibold">{item.event.name} | {item.event.description}</span>
                     <span>${(item.event.price * item.quantity).toFixed(2)}</span>
                   </div>
-                  <div className="flex items-center mt-2">
+                  <div className="flex items-center">
                     <button
                       onClick={() => updateQuantity(item.event.id, -1)}
                       className="px-2 py-1 bg-neutral-800 rounded-l"
@@ -91,7 +92,7 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
                       }
                       className="ml-4 text-red-500"
                     >
-                      Eliminar
+                      <FaTrash />
                     </button>
                   </div>
                 </li>
@@ -99,10 +100,10 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
             </ul>
           )}
         </div>
-        <div className="p-4 border-t text-gray-300">
-          <p className="text-md">Total: ${total.toFixed(2)}</p>
+        <div className="p-4 border-t border-neutral-500 text-gray-300">
+          <p className="text-md pb-4">TOTAL: ${total.toFixed(2)}</p>
           <button
-            className="w-full bg-green-500 text-white py-2 rounded"
+            className="w-full text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 text-sm"
             onClick={handlePurchase}
           >
             Comprar

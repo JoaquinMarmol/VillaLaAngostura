@@ -11,24 +11,24 @@ const HomePage = () => {
   const events = [
     {
       id: '1',
-      image: './event.png',
-      name: 'Fiesta del 28 de Diciembre',
-      price: 15000,
-      description: 'Fiesta inolvidable el 28 de diciembre.',
+      image: './CARDFINDEAÑO.png',
+      name: 'FIN DE AÑO',
+      price: 15400,
+      description: '28 Dic',
     },
     {
-      id: '2',
-      image: './event.png',
-      name: 'Fiesta del 31 de Diciembre',
+      id: '2',      
+      image: './CARDAÑONUEVO.png',
+      name: 'AÑO NUEVO',
       price: 20000,
-      description: 'Celebra el Año Nuevo con estilo.',
+      description: '31 Dic',
     },
     {
       id: '3',
-      image: './event.png',
-      name: 'Ambas Fiestas',
-      price: 30000,
-      description: 'Acceso a las dos fiestas por un precio único.',
+      image: './CARDDOBLE.jpeg',
+      name: 'AMBAS',
+      price: 33000,
+      description: '28 Y 31 Dic',
     },
   ];
 
@@ -95,15 +95,35 @@ const HomePage = () => {
     });
   };
 
+  const smoothScroll = (e) => {
+    e.preventDefault();
+    const target = document.querySelector('#eventos');
+    target?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="container mx-auto py-4">
+    <div className="">
       {/* Header con el ícono del carrito */}
-      <header className="flex justify-center items-center mb-8">
-        <img src="/Logo.png" alt="Logo" className="h-52" />
-        <button onClick={openCart} className="absolute top-5 right-5">
+      <header className="relative flex justify-center items-center mb-8 w-full h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/banner.png')" }}>
+        {/* Superposición para aplicar opacidad */}
+        <div className="absolute inset-0 bg-black opacity-40"></div>
+        
+        {/* Contenido del banner */}
+        <div className="relative z-10 flex flex-col items-center gap-5">
+          <img src="/LOGO.svg" alt="Logo" className="h-52" />
+          <h2 className="text-3xl font-bold text-white text-center">EVENTOS DE MÚSICA ELECTRÓNICA</h2>
+          <a
+            href="#eventos"
+            onClick={smoothScroll}
+            className="text-lg font-bold bg-white text-black px-8 rounded-md transition duration-500 ease-in-out"
+          >
+            VER EVENTOS
+          </a>  
+        </div>
+        <button onClick={openCart} className="fixed top-5 right-5">
           {/* Ícono de carrito */}
           <svg
-            className="w-8 h-8 text-gray-400"
+            className="w-8 h-8 text-gray-50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -121,32 +141,34 @@ const HomePage = () => {
       </header>
 
       {/* Lista de eventos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 z-10 cursor-pointer">
+      <h3 className='text-3xl font-bold text-white pl-7 md:pl-14'>NUESTROS EVENTOS</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 z-10 cursor-pointer px-3 md:px-10 pb-28" id='eventos'>
         {events.map((event) => (
           <div
             key={event.id}
-            className="border border-neutral-800 p-4 rounded shadow hover:shadow-lg transition flex flex-col items-center justify-between h-72"
+            className="p-4 rounded shadow hover:shadow-lg transition flex flex-col items-center justify-between"
             onClick={() => openModal(event)}
           >
             {/* Imagen del evento */}
-            <div className="w-full h-32 mb-4">
+            <div className="w-full mb-4">
               <img
                 src={event.image}
                 alt={event.name}
-                className="w-full h-full object-cover rounded"
+                className="w-full h-[40vh] object-cover rounded"
               />
             </div>
 
             {/* Contenido del evento */}
-            <div className="flex flex-col items-center text-center w-full">
-              <h2 className="text-lg font-semibold mb-2">{event.name}</h2>
-              <p className="mb-4">Precio: ${event.price}</p>
+            <div className="flex flex-col text-left w-full">
+              <h2 className="text-3xl font-semibold mb-1">{event.name}</h2>
+              <p className="mb-1 text-[18px] text-neutral-300">{event.description} 2024 |  01:00 hs</p>
+              <p className="mb-4 text-[16px] text-neutral-400">Precio: ${event.price}</p>
               <button
                 onClick={(e) => {
                   e.stopPropagation(); // Evita que el clic se propague al elemento padre
                   addToCart(event);
                 }}
-                className="bg-green-500 text-white px-4 py-2 rounded w-full"
+                className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-1/2 text-sm"
               >
                 Comprar
               </button>
@@ -154,6 +176,11 @@ const HomePage = () => {
           </div>
         ))}
       </div>
+
+      {/* Pie de página */}
+      <footer className="text-neutral-300 text-center py-4 lg:mt-28">
+        <p>&copy; 2024 Digi Software Solutions. Todos los derechos reservados.</p>
+      </footer>
 
       {/* Modal de detalles del evento */}
       {typeof window !== 'undefined' && modalData && (
