@@ -1,38 +1,24 @@
 "use client";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
-const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
+const Cart = ({ cart = [], isOpen, onClose, updateQuantity }) => {
+  const router = useRouter();
+
+  // Calcula el subtotal y total
   const subtotal = cart.reduce(
     (sum, item) => sum + item.event.price * item.quantity,
     0
   );
   const total = subtotal;
 
-  const handlePurchase = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:3001/api/create-preference",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ cart, total }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.init_point) {
-        window.location.href = data.init_point; // Redirige al checkout de Mercado Pago
-      } else {
-        alert("Hubo un error al procesar el pago.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Hubo un error al procesar el pago.");
-    }
+  const handleGoToPurchaseDetails = () => {
+    // Guarda el carrito y total en localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("total", total.toFixed(2));
+    // Redirige a la página de detalle de compra
+    router.push("/detalle-compra");
   };
 
   return (
@@ -65,9 +51,14 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
           ) : (
             <ul>
               {cart.map((item, index) => (
-                <li key={index} className="mb-4 text-gray-300 flex justify-between items-start gap-2">
+                <li
+                  key={index}
+                  className="mb-4 text-gray-300 flex justify-between items-start gap-2"
+                >
                   <div className="flex flex-col justify-between text-[15px]">
-                    <span className="font-semibold">{item.event.name} | {item.event.description}</span>
+                    <span className="font-semibold">
+                      {item.event.name} | {item.event.description}
+                    </span>
                     <span>${(item.event.price * item.quantity).toFixed(2)}</span>
                   </div>
                   <div className="flex items-center">
@@ -103,24 +94,11 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
         <div className="p-4 border-t border-neutral-500 text-gray-300">
           <p className="text-md pb-4">TOTAL: ${total.toFixed(2)}</p>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePurchase();
-              const button = e.currentTarget;
-              button.classList.add("clicked");
-              setTimeout(() => button.classList.remove("clicked"), 200); // Quita la clase después de 200ms
-            }}
+            onClick={handleGoToPurchaseDetails}
             className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-full text-sm hover:text-neutral-900 hover:bg-neutral-300 transition-all duration-300"
           >
             Comprar
           </button>
-
-          <style jsx>{`
-            .clicked {
-              transform: scale(1.1);
-              transition: transform 200ms ease-in-out;
-            }
-          `}</style>
         </div>
       </div>
     </>
