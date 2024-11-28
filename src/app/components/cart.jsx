@@ -103,11 +103,24 @@ const Cart = ({ cart, isOpen, onClose, updateQuantity }) => {
         <div className="p-4 border-t border-neutral-500 text-gray-300">
           <p className="text-md pb-4">TOTAL: ${total.toFixed(2)}</p>
           <button
-            className="w-full text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 text-sm"
-            onClick={handlePurchase}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePurchase();
+              const button = e.currentTarget;
+              button.classList.add("clicked");
+              setTimeout(() => button.classList.remove("clicked"), 200); // Quita la clase después de 200ms
+            }}
+            className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-full text-sm hover:text-neutral-900 hover:bg-neutral-300 transition-all duration-300"
           >
             Comprar
           </button>
+
+          <style jsx>{`
+            .clicked {
+              transform: scale(1.1);
+              transition: transform 200ms ease-in-out;
+            }
+          `}</style>
         </div>
       </div>
     </>

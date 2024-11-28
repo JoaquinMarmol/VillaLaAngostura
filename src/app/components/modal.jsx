@@ -91,11 +91,21 @@ const Modal = ({ event, onClose, addToCart }) => {
                   onClick={() => {
                     addToCart(event);
                     onClose();
+                    const button = e.currentTarget;
+                    button.classList.add("clicked");
+                    setTimeout(() => button.classList.remove("clicked"), 200); // Quita la clase después de 200ms
                   }}
-                  className="w-full text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 text-sm"
+                  className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-full text-sm hover:text-neutral-900 hover:bg-neutral-300 transition-all duration-300"
                 >
-                  Agregar al Carrito
+                  Comprar
                 </button>
+
+                <style jsx>{`
+                  .clicked {
+                    transform: scale(1.1);
+                    transition: transform 200ms ease-in-out;
+                  }
+                `}</style>
               </div>
             </div>
           </div>

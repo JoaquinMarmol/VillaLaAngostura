@@ -24,7 +24,7 @@ const HomePage = () => {
       },
       extraDescription:
         'Celebra el cierre del año con una noche mágica llena de música electrónica, luces y energía en el mejor club de la ciudad. Prepárate para vivir momentos inolvidables con amigos y disfrutar de los mejores DJs en un ambiente único.',
-      instagramLink: 'https://instagram.com/fiestafindeaño',
+      instagramLink: 'https://www.instagram.com/southconga/',
     },
     {
       id: '2',
@@ -41,7 +41,7 @@ const HomePage = () => {
       },
       extraDescription:
         'Dale la bienvenida al 2025 bajo las estrellas en un evento al aire libre lleno de música, baile y una atmósfera inolvidable. Deja que la magia de Silvestre y el live set de 5 litros marquen el comienzo de un año espectacular.',
-      instagramLink: 'https://instagram.com/fiestaañonuevo',
+      instagramLink: 'https://www.instagram.com/southconga/',
     },
     {
       id: '3',
@@ -52,7 +52,7 @@ const HomePage = () => {
       details: null,
       extraDescription:
         '¿No puedes decidir? ¡Vive ambas fiestas! Disfruta del cierre del año y da la bienvenida al siguiente con dos noches espectaculares. Una experiencia completa para los amantes de la música y la diversión sin límites.',
-      instagramLink: 'https://instagram.com/fiestasdiciembre',
+      instagramLink: 'https://www.instagram.com/southconga/',
     },
   ];  
 
@@ -139,7 +139,7 @@ const HomePage = () => {
           <a
             href="#eventos"
             onClick={smoothScroll}
-            className="text-lg font-bold bg-white text-black px-8 rounded-md transition duration-500 ease-in-out"
+            className="hover:text-neutral-300 hover:bg-neutral-800 text-md font-bold bg-white text-black px-10 py-1 rounded-md transition duration-500 ease-in-out"
           >
             VER EVENTOS
           </a>  
@@ -184,18 +184,30 @@ const HomePage = () => {
 
             {/* Contenido del evento */}
             <div className="flex flex-col text-left w-full">
-              <h2 className="text-3xl font-semibold mb-1">{event.name}</h2>
+              <h2 className="text-3xl font-semibold mb-1 text-neutral-200">{event.name}</h2>
               <p className="mb-1 text-[18px] text-neutral-300">{event.description} 2024 |  01:00 hs</p>
               <p className="mb-4 text-[16px] text-neutral-400">Precio: ${event.price}</p>
               <button
                 onClick={(e) => {
                   e.stopPropagation(); // Evita que el clic se propague al elemento padre
                   addToCart(event);
+
+                  // Captura el botón actual
+                  const button = e.currentTarget;
+                  button.classList.add("clicked");
+                  setTimeout(() => button.classList.remove("clicked"), 200); // Quita la clase después de 200ms
                 }}
-                className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-1/2 text-sm"
+                className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-1/2 text-sm hover:text-neutral-900 hover:bg-neutral-300 transition-all duration-300"
               >
                 Comprar
               </button>
+
+              <style jsx>{`
+                .clicked {
+                  transform: scale(1.1);
+                  transition: transform 200ms ease-in-out;
+                }
+              `}</style>
             </div>
           </div>
         ))}
