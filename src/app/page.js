@@ -12,25 +12,49 @@ const HomePage = () => {
     {
       id: '1',
       image: './CARDFINDEAÑO.png',
-      name: 'FIN DE AÑO',
+      name: 'Fiesta Fin de Año',
       price: 15400,
-      description: '28 Dic',
+      description: '28 diciembre',
+      details: {
+        subtitle: 'Despedimos el año en el Club',
+        mainDJ: '5 litros',
+        warmup: 'Manu Gómez B2B Lean. D',
+        place: 'Catalina',
+        time: '1:00 hs',
+      },
+      extraDescription:
+        'Celebra el cierre del año con una noche mágica llena de música electrónica, luces y energía en el mejor club de la ciudad. Prepárate para vivir momentos inolvidables con amigos y disfrutar de los mejores DJs en un ambiente único.',
+      instagramLink: 'https://instagram.com/fiestafindeaño',
     },
     {
-      id: '2',      
+      id: '2',
       image: './CARDAÑONUEVO.png',
-      name: 'AÑO NUEVO',
+      name: 'Fiesta Año Nuevo',
       price: 20000,
-      description: '31 Dic',
+      description: '31 diciembre',
+      details: {
+        subtitle: 'Recibimos el año al aire libre',
+        mainDJ: 'Silvestre',
+        warmup: '5 litros live Set',
+        place: 'Viejo Fred',
+        time: '1:00 hs',
+      },
+      extraDescription:
+        'Dale la bienvenida al 2025 bajo las estrellas en un evento al aire libre lleno de música, baile y una atmósfera inolvidable. Deja que la magia de Silvestre y el live set de 5 litros marquen el comienzo de un año espectacular.',
+      instagramLink: 'https://instagram.com/fiestaañonuevo',
     },
     {
       id: '3',
       image: './CARDDOBLE.jpeg',
-      name: 'AMBAS',
+      name: 'Ambas Fiestas',
       price: 33000,
-      description: '28 Y 31 Dic',
+      description: '28 y 31 diciembre',
+      details: null,
+      extraDescription:
+        '¿No puedes decidir? ¡Vive ambas fiestas! Disfruta del cierre del año y da la bienvenida al siguiente con dos noches espectaculares. Una experiencia completa para los amantes de la música y la diversión sin límites.',
+      instagramLink: 'https://instagram.com/fiestasdiciembre',
     },
-  ];
+  ];  
 
   // Función para agregar eventos al carrito
   const addToCart = (event) => {

@@ -1,17 +1,7 @@
-// components/Modal.js
 "use client";
-import React, { useState } from 'react';
+import React from "react";
 
 const Modal = ({ event, onClose, addToCart }) => {
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-
-  const handlePurchase = () => {
-    // Aquí puedes manejar la lógica de compra
-    alert(`Compraste: ${event.name}\nTeléfono: ${phone}\nEmail: ${email}`);
-    onClose();
-  };
-
   return (
     <>
       {/* Overlay para cerrar al hacer clic afuera */}
@@ -20,61 +10,95 @@ const Modal = ({ event, onClose, addToCart }) => {
         onClick={onClose}
       />
 
-      {/* Contenido del modal */}
-      <div className="fixed inset-0 flex items-center justify-center z-40">
-        <div className="bg-neutral-900 p-6 rounded shadow-lg w-full max-w-md relative">
-          <button
-            onClick={onClose}
-            className="absolute top-2 right-2 text-gray-300 hover:text-black text-2xl"
-          >
-            &times;
-          </button>
-          <h2 className="text-xl font-bold mb-4 text-gray-300">{event.name}</h2>
-          <p className="mb-4 text-gray-300">{event.description}</p>
-          <p className="mb-4 text-gray-300">Precio: ${event.price}</p>
-          <form>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300">Teléfono:</label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full border px-2 py-1 rounded text-gray-700"
-                required
+      {/* Contenedor scrollable con fondo completo */}
+      <div className="fixed inset-0 z-40 overflow-y-auto">
+        <div className="min-h-screen flex justify-center items-center">
+          <div className="bg-[#171717] p-6 rounded shadow-lg w-full max-w-4xl relative flex flex-col md:flex-row my-10">
+            {/* Imagen a la izquierda */}
+            <div className="w-full md:w-1/2">
+              <img
+                src={event.image}
+                alt={event.name}
+                className="w-full h-full object-cover rounded-l"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300">
-                Correo Electrónico:
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border px-2 py-1 rounded text-gray-700"
-                required
-              />
-            </div>
-            <div className="flex justify-between">
+
+            {/* Detalles a la derecha */}
+            <div className="w-full md:w-1/2 p-6 flex flex-col justify-between">
+              {/* Botón para cerrar */}
               <button
-                type="button"
-                onClick={() => {
-                  addToCart(event);
-                  onClose();
-                }}
-                className="bg-green-500 text-white px-4 py-2 rounded"
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-300 hover:text-white text-2xl"
               >
-                Agregar al Carrito
+                &times;
               </button>
-              <button
-                type="button"
-                onClick={handlePurchase}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Comprar Ahora
-              </button>
+
+              {/* Título del evento */}
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-white">{event.name}</h2>
+                <p className="text-lg font-medium text-gray-300">
+                  {event.description} 2024
+                </p>
+                {event.details && (
+                  <>
+                    <p className="text-gray-400 italic">
+                      {event.details.subtitle}
+                    </p>
+                    <p>
+                      <span className="font-bold text-gray-300">Lugar:</span>{" "}
+                      {event.details.place}
+                    </p>
+                    <p>
+                      <span className="font-bold text-gray-300">Hora:</span>{" "}
+                      {event.details.time}
+                    </p>
+                    <p>
+                      <span className="font-bold text-gray-300">
+                        DJ Principal:
+                      </span>{" "}
+                      {event.details.mainDJ}
+                    </p>
+                    <p>
+                      <span className="font-bold text-gray-300">Warmup:</span>{" "}
+                      {event.details.warmup}
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* Descripción adicional */}
+              {event.extraDescription && (
+                <div className="mt-4 text-gray-400">
+                  <p>{event.extraDescription}</p>
+                </div>
+              )}
+
+              {/* Enlace a Instagram */}
+              <div className="mt-4">
+                <a
+                  href={event.instagramLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  Visítanos en Instagram
+                </a>
+              </div>
+
+              {/* Botones para acciones */}
+              <div className="mt-4 flex justify-between">
+                <button
+                  onClick={() => {
+                    addToCart(event);
+                    onClose();
+                  }}
+                  className="w-full text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 text-sm"
+                >
+                  Agregar al Carrito
+                </button>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>
