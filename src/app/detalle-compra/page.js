@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import UbicacionAutocompletado from "../components/ubicacion"; // Asegúrate de ajustar la ruta según tu estructura de archivos
+import UbicacionAutocompletado from "../components/ubicacion"; // Ajusta la ruta según tu estructura de archivos
 
 const DetalleCompra = () => {
   const router = useRouter();
@@ -19,8 +19,9 @@ const DetalleCompra = () => {
   });
 
   const [errors, setErrors] = useState({}); // Estado para almacenar errores de validación
+  const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
 
-  // Recupera los datos del carrito y el total desde localStorage
+  // Recupera los datos del carrito y el total desde localStorage al montar el componente
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     const storedTotal = localStorage.getItem("total");
@@ -29,8 +30,16 @@ const DetalleCompra = () => {
     if (storedTotal) setTotal(parseFloat(storedTotal));
   }, []);
 
+  // Maneja los cambios en los campos del formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Permitir solo números en los campos de CUIT/CUIL
+    if (name === "cuitPart1" || name === "cuitPart2" || name === "cuitPart3") {
+      if (!/^\d*$/.test(value)) {
+        return; // Evita actualizar el estado si el valor contiene caracteres no numéricos
+      }
+    }
 
     // Limpiar errores al cambiar el valor de un campo
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
@@ -38,7 +47,7 @@ const DetalleCompra = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Maneja la selección de una ubicación
+  // Maneja la selección de una ubicación desde el componente de autocompletado
   const handleUbicacionSelect = (ubicacion) => {
     setFormData((prev) => ({
       ...prev,
@@ -104,7 +113,7 @@ const DetalleCompra = () => {
     return valid;
   };
 
-  // Función para validar CUIT/CUIL
+  // Función para validar CUIT/CUIL según el algoritmo estándar
   const isValidCuit = (cuit) => {
     cuit = cuit.replace(/[-]/g, "");
     if (cuit.length !== 11 || !/^\d+$/.test(cuit)) return false;
@@ -122,6 +131,7 @@ const DetalleCompra = () => {
     return parseInt(cuit[10]) === verificador;
   };
 
+  // Función para manejar la compra
   const handlePurchase = async () => {
     if (!validateForm()) {
       return; // Detener si el formulario no es válido
@@ -130,31 +140,60 @@ const DetalleCompra = () => {
     // Combinar las partes del CUIT/CUIL antes de enviar
     const cuitCuil = `${formData.cuitPart1}-${formData.cuitPart2}-${formData.cuitPart3}`;
 
+    // Extraer event_type_id y quantity del carrito
+    if (cart.length === 0) {
+      alert("El carrito está vacío.");
+      return;
+    }
+
+    const eventTypeId = cart[0].event.id; // Asumiendo que solo hay un tipo de evento en el carrito
+    const quantity = cart[0].quantity;
+    const payerEmail = formData.mail;
+
+    // Configurar el payload para la solicitud POST
+    const payload = {
+      event_type_id: eventTypeId,
+      quantity: quantity,
+      payer_email: payerEmail,
+      // Agregar todos los campos del formulario
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      telefono: formData.telefono,
+      direccion: formData.direccion,
+      cuit_cuil: cuitCuil,
+    };
+
+    setLoading(true); // Iniciar estado de carga
+
     try {
-      const response = await fetch(
-        "http://localhost:3001/api/create-preference",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ cart, total, formData: { ...formData, cuitCuil } }),
-        }
-      );
+      const response = await fetch("https://digisoftware.online/api/payment-intents/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud de pago.");
+      }
 
       const data = await response.json();
 
-      if (data.init_point) {
-        window.location.href = data.init_point; // Redirige al checkout
+      if (data.payment_url) {
+        window.location.href = data.payment_url; // Redirige al checkout de MercadoPago
       } else {
         alert("Hubo un error al procesar el pago.");
       }
     } catch (error) {
       console.error("Error:", error);
       alert("Hubo un error al procesar el pago.");
+    } finally {
+      setLoading(false); // Finalizar estado de carga
     }
   };
 
+  // Función para regresar a la página principal
   const handleBack = () => {
     router.push("/"); // Cambia "/" por la ruta deseada
   };
@@ -270,6 +309,7 @@ const DetalleCompra = () => {
             <div>
               <label className="block mb-2">CUIT/CUIL</label>
               <div className="flex space-x-2">
+                {/* Parte 1 */}
                 <input
                   type="text"
                   name="cuitPart1"
@@ -282,6 +322,7 @@ const DetalleCompra = () => {
                   }`}
                 />
                 <span className="self-center">-</span>
+                {/* Parte 2 */}
                 <input
                   type="text"
                   name="cuitPart2"
@@ -294,6 +335,7 @@ const DetalleCompra = () => {
                   }`}
                 />
                 <span className="self-center">-</span>
+                {/* Parte 3 */}
                 <input
                   type="text"
                   name="cuitPart3"
@@ -330,9 +372,12 @@ const DetalleCompra = () => {
         <div className="mt-6">
           <button
             onClick={handlePurchase}
-            className="w-full bg-neutral-300 text-black rounded-lg py-2 hover:bg-neutral-400 transition-all duration-300"
+            disabled={loading}
+            className={`w-full bg-neutral-300 text-black rounded-lg py-2 hover:bg-neutral-400 transition-all duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Confirmar Compra
+            {loading ? "Procesando..." : "Confirmar Compra"}
           </button>
         </div>
       </div>
