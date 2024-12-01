@@ -2,6 +2,8 @@
 import React from "react";
 
 const Modal = ({ event, onClose, addToCart }) => {
+  console.log("Event data in Modal:", event);
+
   return (
     <>
       {/* Overlay para cerrar al hacer clic afuera */}
@@ -39,37 +41,39 @@ const Modal = ({ event, onClose, addToCart }) => {
                 <p className="text-lg font-medium text-gray-300">
                   {event.description} 2024
                 </p>
-                {event.details && (
+                {event.details ? (
                   <>
                     <p className="text-gray-400 italic">
                       {event.details.subtitle}
                     </p>
-                    <p>
+                    <p className="text-gray-400">
                       <span className="font-bold text-gray-300">Lugar:</span>{" "}
                       {event.details.place}
                     </p>
-                    <p>
+                    <p className="text-gray-400">
                       <span className="font-bold text-gray-300">Hora:</span>{" "}
                       {event.details.time}
                     </p>
-                    <p>
+                    <p className="text-gray-400">
                       <span className="font-bold text-gray-300">
                         DJ Principal:
                       </span>{" "}
                       {event.details.mainDJ}
                     </p>
-                    <p>
+                    <p className="text-gray-400">
                       <span className="font-bold text-gray-300">Warmup:</span>{" "}
                       {event.details.warmup}
                     </p>
                   </>
+                ) : (
+                  <p className="text-gray-400">Detalles no disponibles</p>
                 )}
               </div>
 
               {/* Descripción adicional */}
               {event.extraDescription && (
                 <div className="mt-4 text-gray-400">
-                  <p>{event.extraDescription}</p>
+                  <p className="text-gray-400">{event.extraDescription}</p>
                 </div>
               )}
 
@@ -91,21 +95,11 @@ const Modal = ({ event, onClose, addToCart }) => {
                   onClick={() => {
                     addToCart(event);
                     onClose();
-                    const button = e.currentTarget;
-                    button.classList.add("clicked");
-                    setTimeout(() => button.classList.remove("clicked"), 200); // Quita la clase después de 200ms
                   }}
                   className="text-neutral-300 border border-neutral-500 rounded-lg px-4 py-2 w-full text-sm hover:text-neutral-900 hover:bg-neutral-300 transition-all duration-300"
                 >
                   Comprar
                 </button>
-
-                <style jsx>{`
-                  .clicked {
-                    transform: scale(1.1);
-                    transition: transform 200ms ease-in-out;
-                  }
-                `}</style>
               </div>
             </div>
           </div>
