@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import UbicacionAutocompletado from "../components/ubicacion"; // Ajusta la ruta según tu estructura de archivos
+import UbicacionAutocompletado from "../components/ubicacion";
 
 const DetalleCompra = () => {
   const router = useRouter();
@@ -13,15 +13,15 @@ const DetalleCompra = () => {
     mail: "",
     telefono: "",
     direccion: "",
-    cuitPart1: "",
-    cuitPart2: "",
-    cuitPart3: "",
+    ciudad: "",
+    provincia: "",
+    postalCode: "",
+    documento: "",
   });
 
-  const [errors, setErrors] = useState({}); // Estado para almacenar errores de validación
-  const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  // Recupera los datos del carrito y el total desde localStorage al montar el componente
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     const storedTotal = localStorage.getItem("total");
@@ -30,51 +30,52 @@ const DetalleCompra = () => {
     if (storedTotal) setTotal(parseFloat(storedTotal));
   }, []);
 
-  // Maneja los cambios en los campos del formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    // Permitir solo números en los campos de CUIT/CUIL
-    if (name === "cuitPart1" || name === "cuitPart2" || name === "cuitPart3") {
+    if (name === "documento") {
       if (!/^\d*$/.test(value)) {
-        return; // Evita actualizar el estado si el valor contiene caracteres no numéricos
+        return;
       }
     }
 
-    // Limpiar errores al cambiar el valor de un campo
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Maneja la selección de una ubicación desde el componente de autocompletado
   const handleUbicacionSelect = (ubicacion) => {
+    const addressParts = ubicacion.place_name.split(", ");
+    const calleNumero = addressParts[0];
+    const ciudad = addressParts[1];
+    const provincia = addressParts[2];
+    const postalCode = addressParts[3]?.split(" ")[0] || "";
+
     setFormData((prev) => ({
       ...prev,
-      direccion: ubicacion.place_name,
+      direccion: calleNumero,
+      ciudad: ciudad,
+      provincia: provincia,
+      postalCode: postalCode,
     }));
-    // Limpiar error de dirección si existía
+
     setErrors((prevErrors) => ({ ...prevErrors, direccion: "" }));
   };
 
-  // Función para validar el formulario
   const validateForm = () => {
     let valid = true;
     let errors = {};
 
-    // Validación del nombre
     if (!formData.nombre.trim()) {
       errors.nombre = "El nombre es obligatorio.";
       valid = false;
     }
 
-    // Validación del apellido
     if (!formData.apellido.trim()) {
       errors.apellido = "El apellido es obligatorio.";
       valid = false;
     }
 
-    // Validación del correo electrónico
     if (!formData.mail.trim()) {
       errors.mail = "El correo electrónico es obligatorio.";
       valid = false;
@@ -83,27 +84,19 @@ const DetalleCompra = () => {
       valid = false;
     }
 
-    // Validación del teléfono
     if (!formData.telefono.trim()) {
       errors.telefono = "El teléfono es obligatorio.";
       valid = false;
     }
 
-    // Validación del CUIT/CUIL
-    const cuitCuil = `${formData.cuitPart1}${formData.cuitPart2}${formData.cuitPart3}`;
-    if (
-      !formData.cuitPart1.trim() ||
-      !formData.cuitPart2.trim() ||
-      !formData.cuitPart3.trim()
-    ) {
-      errors.cuitCuil = "El CUIT/CUIL es obligatorio.";
+    if (!formData.documento.trim()) {
+      errors.documento = "El documento es obligatorio.";
       valid = false;
-    } else if (!isValidCuit(cuitCuil)) {
-      errors.cuitCuil = "El CUIT/CUIL no es válido.";
+    } else if (!/^\d{1,10}$/.test(formData.documento)) {
+      errors.documento = "El documento debe ser un número de hasta 10 dígitos.";
       valid = false;
     }
 
-    // Validación de la dirección
     if (!formData.direccion.trim()) {
       errors.direccion = "La dirección es obligatoria.";
       valid = false;
@@ -113,57 +106,37 @@ const DetalleCompra = () => {
     return valid;
   };
 
-  // Función para validar CUIT/CUIL según el algoritmo estándar
-  const isValidCuit = (cuit) => {
-    cuit = cuit.replace(/[-]/g, "");
-    if (cuit.length !== 11 || !/^\d+$/.test(cuit)) return false;
-
-    const mult = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
-    let total = 0;
-
-    for (let i = 0; i < mult.length; i++) {
-      total += parseInt(cuit[i]) * mult[i];
-    }
-
-    const mod11 = 11 - (total % 11);
-    let verificador = mod11 === 11 ? 0 : mod11 === 10 ? 9 : mod11;
-
-    return parseInt(cuit[10]) === verificador;
-  };
-
-  // Función para manejar la compra
   const handlePurchase = async () => {
     if (!validateForm()) {
-      return; // Detener si el formulario no es válido
+      return;
     }
 
-    // Combinar las partes del CUIT/CUIL antes de enviar
-    const cuitCuil = `${formData.cuitPart1}-${formData.cuitPart2}-${formData.cuitPart3}`;
-
-    // Extraer event_type_id y quantity del carrito
     if (cart.length === 0) {
       alert("El carrito está vacío.");
       return;
     }
 
-    const eventTypeId = cart[0].event.id; // Asumiendo que solo hay un tipo de evento en el carrito
+    const eventTypeId = cart[0].event.id;
     const quantity = cart[0].quantity;
     const payerEmail = formData.mail;
 
-    // Configurar el payload para la solicitud POST
     const payload = {
       event_type_id: eventTypeId,
       quantity: quantity,
       payer_email: payerEmail,
-      // Agregar todos los campos del formulario
-      nombre: formData.nombre,
-      apellido: formData.apellido,
-      telefono: formData.telefono,
-      direccion: formData.direccion,
-      cuit_cuil: cuitCuil,
+      billing_info: {
+        document_type: "DNI",
+        document_number: formData.documento,
+        full_name: `${formData.nombre} ${formData.apellido}`,
+        email: formData.mail,
+        phone: formData.telefono,
+        address: formData.direccion,
+        city: formData.ciudad,
+        postal_code: formData.postalCode,
+      },
     };
 
-    setLoading(true); // Iniciar estado de carga
+    setLoading(true);
 
     try {
       const response = await fetch("https://digisoftware.online/api/payment-intents/", {
@@ -181,7 +154,7 @@ const DetalleCompra = () => {
       const data = await response.json();
 
       if (data.payment_url) {
-        window.location.href = data.payment_url; // Redirige al checkout de MercadoPago
+        window.location.href = data.payment_url;
       } else {
         alert("Hubo un error al procesar el pago.");
       }
@@ -189,13 +162,12 @@ const DetalleCompra = () => {
       console.error("Error:", error);
       alert("Hubo un error al procesar el pago.");
     } finally {
-      setLoading(false); // Finalizar estado de carga
+      setLoading(false);
     }
   };
 
-  // Función para regresar a la página principal
   const handleBack = () => {
-    router.push("/"); // Cambia "/" por la ruta deseada
+    router.push("/");
   };
 
   return (
@@ -215,17 +187,12 @@ const DetalleCompra = () => {
           ) : (
             <ul>
               {cart.map((item, index) => (
-                <li
-                  key={index}
-                  className="flex justify-between items-center mb-4"
-                >
+                <li key={index} className="flex justify-between items-center mb-4">
                   <div>
                     <span className="font-semibold">{item.event.name}</span>
                     <p className="text-sm">{item.event.description}</p>
                   </div>
-                  <span>
-                    ${(item.event.price * item.quantity).toFixed(2)}
-                  </span>
+                  <span>${(item.event.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
             </ul>
@@ -237,7 +204,6 @@ const DetalleCompra = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4">Información Personal</h2>
           <form className="space-y-4">
-            {/* Nombre */}
             <div>
               <input
                 type="text"
@@ -249,12 +215,9 @@ const DetalleCompra = () => {
                   errors.nombre ? "border border-red-500" : ""
                 }`}
               />
-              {errors.nombre && (
-                <p className="text-red-500 text-sm">{errors.nombre}</p>
-              )}
+              {errors.nombre && <p className="text-red-500 text-sm">{errors.nombre}</p>}
             </div>
 
-            {/* Apellido */}
             <div>
               <input
                 type="text"
@@ -266,12 +229,9 @@ const DetalleCompra = () => {
                   errors.apellido ? "border border-red-500" : ""
                 }`}
               />
-              {errors.apellido && (
-                <p className="text-red-500 text-sm">{errors.apellido}</p>
-              )}
+              {errors.apellido && <p className="text-red-500 text-sm">{errors.apellido}</p>}
             </div>
 
-            {/* Correo electrónico */}
             <div>
               <input
                 type="email"
@@ -283,12 +243,9 @@ const DetalleCompra = () => {
                   errors.mail ? "border border-red-500" : ""
                 }`}
               />
-              {errors.mail && (
-                <p className="text-red-500 text-sm">{errors.mail}</p>
-              )}
+              {errors.mail && <p className="text-red-500 text-sm">{errors.mail}</p>}
             </div>
 
-            {/* Teléfono */}
             <div>
               <input
                 type="tel"
@@ -300,72 +257,33 @@ const DetalleCompra = () => {
                   errors.telefono ? "border border-red-500" : ""
                 }`}
               />
-              {errors.telefono && (
-                <p className="text-red-500 text-sm">{errors.telefono}</p>
-              )}
+              {errors.telefono && <p className="text-red-500 text-sm">{errors.telefono}</p>}
             </div>
 
-            {/* CUIT/CUIL */}
             <div>
-              <label className="block mb-2">CUIT/CUIL</label>
-              <div className="flex space-x-2">
-                {/* Parte 1 */}
-                <input
-                  type="text"
-                  name="cuitPart1"
-                  placeholder="00"
-                  maxLength={2}
-                  value={formData.cuitPart1}
-                  onChange={handleInputChange}
-                  className={`w-1/4 p-2 bg-neutral-700 text-neutral-200 rounded ${
-                    errors.cuitCuil ? "border border-red-500" : ""
-                  }`}
-                />
-                <span className="self-center">-</span>
-                {/* Parte 2 */}
-                <input
-                  type="text"
-                  name="cuitPart2"
-                  placeholder="00000000"
-                  maxLength={8}
-                  value={formData.cuitPart2}
-                  onChange={handleInputChange}
-                  className={`w-1/2 p-2 bg-neutral-700 text-neutral-200 rounded ${
-                    errors.cuitCuil ? "border border-red-500" : ""
-                  }`}
-                />
-                <span className="self-center">-</span>
-                {/* Parte 3 */}
-                <input
-                  type="text"
-                  name="cuitPart3"
-                  placeholder="0"
-                  maxLength={1}
-                  value={formData.cuitPart3}
-                  onChange={handleInputChange}
-                  className={`w-1/6 p-2 bg-neutral-700 text-neutral-200 rounded ${
-                    errors.cuitCuil ? "border border-red-500" : ""
-                  }`}
-                />
-              </div>
-              {errors.cuitCuil && (
-                <p className="text-red-500 text-sm">{errors.cuitCuil}</p>
-              )}
+              <label className="block mb-2">Documento (DNI o Pasaporte Extranjero)</label>
+              <input
+                type="text"
+                name="documento"
+                placeholder="Ingrese su documento"
+                maxLength={10}
+                value={formData.documento}
+                onChange={handleInputChange}
+                className={`w-full p-2 bg-neutral-700 text-neutral-200 rounded ${
+                  errors.documento ? "border border-red-500" : ""
+                }`}
+              />
+              {errors.documento && <p className="text-red-500 text-sm">{errors.documento}</p>}
             </div>
 
-            {/* Domicilio */}
             <h3 className="text-lg font-medium">Domicilio</h3>
-            <span className="text-sm">
-              Buscar en este orden: calle, número, localidad, provincia
-            </span>
+            <span className="text-sm">Buscar en este orden: calle, número, localidad, provincia</span>
             <div>
               <UbicacionAutocompletado
                 onUbicacionSelect={handleUbicacionSelect}
                 initialValue={formData.direccion}
               />
-              {errors.direccion && (
-                <p className="text-red-500 text-sm">{errors.direccion}</p>
-              )}
+              {errors.direccion && <p className="text-red-500 text-sm">{errors.direccion}</p>}
             </div>
           </form>
         </div>
