@@ -116,7 +116,7 @@ const DetalleCompra = () => {
       return;
     }
   
-    const eventTypeId = cart[0].event.id;
+    const eventTypeId = parseInt(cart[0].event.id, 10);
     const quantity = cart[0].quantity;
     const payerEmail = formData.mail;
   
@@ -142,6 +142,9 @@ const DetalleCompra = () => {
     } else {
       payload.event_type_id = eventTypeId;
     }
+  
+    // Puedes agregar un console.log aquí para verificar el payload
+    console.log("Payload:", payload);
   
     setLoading(true);
   
