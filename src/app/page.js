@@ -15,6 +15,7 @@ const HomePage = () => {
       image: './CARDFINDEAÑO.png',
       name: 'FIESTA FIN DE AÑO',
       price: 15400,
+      flyer: "./FLYER.png",
       description: '28 diciembre',
       details: {
         subtitle: 'Despedimos el año en el Club',
@@ -32,6 +33,7 @@ const HomePage = () => {
       image: './CARDAÑONUEVO.png',
       name: 'FIESTA AÑO NUEVO',
       price: 20000,
+      flyer: "./FLYER2.png",
       description: '31 diciembre',
       details: {
         subtitle: 'Recibimos el año al aire libre',
@@ -49,6 +51,7 @@ const HomePage = () => {
       image: './CARDDOBLE.jpeg',
       name: 'COMBO FIESTA',
       price: 33000,
+      flyer: "./CARDDOBLE.jpeg",
       description: '28 y 31 diciembre',
       details: null,
       extraDescription:

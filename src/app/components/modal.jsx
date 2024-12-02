@@ -19,7 +19,7 @@ const Modal = ({ event, onClose, addToCart }) => {
             {/* Imagen a la izquierda */}
             <div className="w-full md:w-1/2">
               <img
-                src={event.image}
+                src={event.flyer}
                 alt={event.name}
                 className="w-full h-full object-cover rounded-l"
               />
