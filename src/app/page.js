@@ -49,7 +49,7 @@ const HomePage = () => {
     {
       id: '3',
       image: './CARDDOBLE.jpeg',
-      name: 'COMBO FIESTA',
+      name: 'PROMO POR AMBAS',
       price: 33000,
       flyer: "./CARDDOBLE.jpeg",
       description: '28 y 31 diciembre',

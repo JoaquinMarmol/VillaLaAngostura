@@ -110,18 +110,18 @@ const DetalleCompra = () => {
     if (!validateForm()) {
       return;
     }
-
+  
     if (cart.length === 0) {
       alert("El carrito está vacío.");
       return;
     }
-
+  
     const eventTypeId = cart[0].event.id;
     const quantity = cart[0].quantity;
     const payerEmail = formData.mail;
-
+  
+    // Construir el payload inicial sin event_type_id ni combo_id
     const payload = {
-      event_type_id: eventTypeId,
       quantity: quantity,
       payer_email: payerEmail,
       billing_info: {
@@ -132,12 +132,19 @@ const DetalleCompra = () => {
         phone: formData.telefono,
         address: formData.direccion,
         city: formData.ciudad,
-        postal_code: formData.postalCode,
+        postal_code: formData.postalCode || "", // Hacer postal_code opcional
       },
     };
-
+  
+    // Condicionalmente agregar event_type_id o combo_id
+    if (eventTypeId === 3) {
+      payload.combo_id = 1;
+    } else {
+      payload.event_type_id = eventTypeId;
+    }
+  
     setLoading(true);
-
+  
     try {
       const response = await fetch("https://digisoftware.online/api/payment-intents/", {
         method: "POST",
@@ -146,13 +153,13 @@ const DetalleCompra = () => {
         },
         body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         throw new Error("Error en la solicitud de pago.");
       }
-
+  
       const data = await response.json();
-
+  
       if (data.payment_url) {
         window.location.href = data.payment_url;
       } else {
@@ -165,6 +172,7 @@ const DetalleCompra = () => {
       setLoading(false);
     }
   };
+  
 
   const handleBack = () => {
     router.push("/");
