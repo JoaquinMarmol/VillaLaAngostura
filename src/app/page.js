@@ -201,7 +201,15 @@ const HomePage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="text-neutral-300 text-center py-4">
+      <footer className="text-neutral-300  text-center py-4">
+        <div className="grid grid-cols-3 place-items-center md:flex justify-center gap-5 items-center mb-10 px-10">
+          <img src="/SURGENETICS.png" alt="Logo" className="h-14" />
+          <img src="/VIEJOFRED.png" alt="Logo" className="h-14" />
+          <img src="/PIERINA.png" alt="Logo" className="h-6" />
+          <img src="/Rectangle.png" alt="Logo" className="h-18" />
+          <img src="/BUHA.png" alt="Logo" className="" />
+          <img src="/Rectangle2.png" alt="Logo" className="h-18" />
+        </div>
         <p>&copy; 2024 Digi Software Solutions. Todos los derechos reservados.</p>
       </footer>
 
