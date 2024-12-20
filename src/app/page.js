@@ -14,7 +14,7 @@ const HomePage = () => {
       id: '1',
       image: './CARDFINDEAÑO.png',
       name: 'FIESTA FIN DE AÑO',
-      price: 15400,
+      price: 16000,
       flyer: "./FLYER.png",
       description: '28 diciembre',
       details: {
@@ -50,7 +50,7 @@ const HomePage = () => {
       id: '3',
       image: './CARDDOBLE.jpeg',
       name: 'PROMO POR AMBAS',
-      price: 33000,
+      price: 30000,
       flyer: "./CARDDOBLE.jpeg",
       description: '28 y 31 diciembre',
       details: null,
