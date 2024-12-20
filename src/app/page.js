@@ -32,7 +32,7 @@ const HomePage = () => {
       id: '2',
       image: './CARDAÑONUEVO.png',
       name: 'FIESTA AÑO NUEVO | SILVESTRE',
-      price: 20000,
+      price: 22000,
       flyer: "./FLYER2.png",
       description: '31 diciembre',
       details: {
