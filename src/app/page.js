@@ -11,24 +11,6 @@ const HomePage = () => {
 
   const events = [
     {
-      id: '1',
-      image: './CARDFINDEAÑO.png',
-      name: 'FIESTA FIN DE AÑO',
-      price: 16000,
-      flyer: "./FLYER.png",
-      description: '28 diciembre',
-      details: {
-        subtitle: 'Despedimos el año en el Club',
-        mainDJ: '5 litros',
-        warmup: 'Manu Gómez B2B Lean. D',
-        place: 'Catalina',
-        time: '1:00 hs',
-      },
-      extraDescription:
-        'Celebra el cierre del año con una noche mágica llena de música electrónica, luces y energía en el mejor club de la ciudad. Prepárate para vivir momentos inolvidables con amigos y disfrutar de los mejores DJs en un ambiente único.',
-      instagramLink: 'https://www.instagram.com/southconga/',
-    },
-    {
       id: '2',
       image: './CARDAÑONUEVO.png',
       name: 'FIESTA AÑO NUEVO | SILVESTRE',
@@ -45,19 +27,7 @@ const HomePage = () => {
       extraDescription:
         'Dale la bienvenida al 2025 bajo las estrellas en un evento al aire libre lleno de música, baile y una atmósfera inolvidable. Deja que la magia de Silvestre y el live set de 5 litros marquen el comienzo de un año espectacular.',
       instagramLink: 'https://www.instagram.com/southconga/',
-    },
-    {
-      id: '3',
-      image: './CARDDOBLE.jpeg',
-      name: 'PROMO POR AMBAS',
-      price: 30000,
-      flyer: "./CARDDOBLE.jpeg",
-      description: '28 y 31 diciembre',
-      details: null,
-      extraDescription:
-        '¿No puedes decidir? ¡Vive ambas fiestas! Disfruta del cierre del año y da la bienvenida al siguiente con dos noches espectaculares. Una experiencia completa para los amantes de la música y la diversión sin límites.',
-      instagramLink: 'https://www.instagram.com/southconga/',
-    },
+    }
   ];
 
   const addToCart = (event) => {
